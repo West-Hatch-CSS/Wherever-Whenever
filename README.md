@@ -10,7 +10,7 @@ Then run this command to install the pygame library to your computer: (on Mac go
 
 pip install pygame
 
-If you are running this in an IDE such as cursor or Visual Studio Code please install the Python extenion for your IDE.
+If you are running this in an IDE such as cursor or Visual Studio Code please install the Python extension for your IDE.
 
 **About our project**
 
