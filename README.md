@@ -1,4 +1,4 @@
-# Wherever-Whenever
+# Wherever Whenever
 
 **Installation Guide**
 
