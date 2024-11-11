@@ -25,9 +25,10 @@ jobs:
           ls -al /etc/ssl/certs # List SSL certificate files
           echo | openssl s_client -showcerts -servername github.com -connect github.com:443 # Check SSL connection to GitHub
 
-      - name: Install pygbag
+      - name: Install pygbag (no SSL verification)
         run: |
-          pip install pygbag
+          pip install pygbag --trusted-host pypi.org --trusted-host files.pythonhosted.org
+
 
       - name: Run pygbag from parent directory
         run: |
