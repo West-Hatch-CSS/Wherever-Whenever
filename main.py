@@ -156,7 +156,7 @@ def unscaleHeight(height):
     pointY = unscaleY(height)
     return int(pointY-point0)
 
-
+fullscreen = False
 mainMenu = True
 startup = True
 closeWindow = False
@@ -164,14 +164,36 @@ while closeWindow == False:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             closeWindow = True
-        
         screen.fill(gameColors["grey"])
         
+        if event.type == pygame.KEYDOWN:
+            key = pygame.key.name(event.key)
+            if mac == False and key=="f11":
+                fullscreen = not fullscreen  # Toggle state
+                if fullscreen:
+                # Enable fullscreen
+                    oldWidth = screen.get_width()
+                    oldHeight = screen.get_height()
+                    pygame.display.quit()
+                    pygame.display.set_caption("Wherever Whenever!")
+                    pygame.display.init()
+                    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+                else:
+                    # Return to windowed mode
+                    pygame.display.quit()
+                    pygame.display.set_caption("Wherever Whenever!")
+                    pygame.display.init()
+                    screen = pygame.display.set_mode((oldWidth, oldHeight), pygame.RESIZABLE)
+        
+        
+        # This tries to size the window correctly so black borders can be avoided
         if screen.get_size()[0] != usersDisplaySize.current_w:
             if screen.get_size()[0] / screen.get_size()[1] > (16/9) + 0.01 or screen.get_size()[0] / screen.get_size()[1] < (16/9) - 0.01:
                 print(f"Resolution: {screen.get_size()[0]}x{screen.get_size()[1]}")
                 pygame.display.set_mode((screen.get_size()[0], screen.get_size()[0]*0.5625), pygame.RESIZABLE)
 
+
+        # THIS DRAWS BLACK BORDERS if user aaspect ratio is different
             #pygame.draw.rect(screen, gameColors["white"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleX))
         if screen.get_size()[0]/screen.get_size()[1] > (16/9):
            pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (unscaleX(0)-0), (screen.get_size()[1])))
@@ -214,7 +236,7 @@ while closeWindow == False:
                     npcName = font.render('Natalia M', True, gameColors["white"])
                     screen.blit(npcName, (unscaleX(546), unscaleY(690)))
 
-        pygame.display.update()
+        pygame.display.flip()
 
 
 pygame.quit()
