@@ -25,4 +25,4 @@ jobs:
       - name: Run pygbag from parent directory
         run: |
           cd ..
-          pygbag path/to/your-repo-folder  # Replace with the name of your repo folder
+          pygbag ${{ github.event.repository.name }}
