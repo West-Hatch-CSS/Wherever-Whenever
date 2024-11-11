@@ -1,0 +1,28 @@
+name: Run pygbag on update
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-pygbag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install pygbag
+        run: |
+          pip install pygbag
+
+      - name: Run pygbag from parent directory
+        run: |
+          cd ..
+          pygbag path/to/your-repo-folder  # Replace with the name of your repo folder
