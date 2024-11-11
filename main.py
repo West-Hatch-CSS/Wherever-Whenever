@@ -1,10 +1,8 @@
-import pygame, sys
+import pygame, sys, asyncio
 
 pygame.init()
 
 developerMode = True
-npcPrototype = False
-shapeTest = False
 
 base_width = 1440
 base_height = 900
@@ -36,13 +34,11 @@ usersDisplaySize = pygame.display.Info()
 pygame.display.set_caption("Wherever Whenever!")
 
 
-if developerMode == True:
-    print(f"Your Display DimensionsL {usersDisplaySize.current_w}x{usersDisplaySize.current_h}")
+
 
 differentAspectRatio = False
 if (usersDisplaySize.current_w / usersDisplaySize.current_h) != (1920/1080):
     differentAspectRatio = True
-    print("Your display has an unsusual aspect ratio. In order to prevent weird scaling, parts of the screen will be black")
 
 if differentAspectRatio == False:
     screen = pygame.display.set_mode((usersDisplaySize.current_w//2, usersDisplaySize.current_h//2), pygame.RESIZABLE)
@@ -156,88 +152,87 @@ def unscaleHeight(height):
     pointY = unscaleY(height)
     return int(pointY-point0)
 
-fullscreen = False
-mainMenu = True
-startup = True
-closeWindow = False
-while closeWindow == False:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            closeWindow = True
-        screen.fill(gameColors["grey"])
-        
-        if event.type == pygame.KEYDOWN:
-            key = pygame.key.name(event.key)
-            if mac == False and key=="f11":
-                fullscreen = not fullscreen  # Toggle state
-                if fullscreen:
-                # Enable fullscreen
-                    oldWidth = screen.get_width()
-                    oldHeight = screen.get_height()
-                    pygame.display.quit()
-                    pygame.display.set_caption("Wherever Whenever!")
-                    pygame.display.init()
-                    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-                else:
-                    # Return to windowed mode
-                    pygame.display.quit()
-                    pygame.display.set_caption("Wherever Whenever!")
-                    pygame.display.init()
-                    screen = pygame.display.set_mode((oldWidth, oldHeight), pygame.RESIZABLE)
-        
-        
-        # This tries to size the window correctly so black borders can be avoided
-        if screen.get_size()[0] != usersDisplaySize.current_w:
-            if screen.get_size()[0] / screen.get_size()[1] > (16/9) + 0.01 or screen.get_size()[0] / screen.get_size()[1] < (16/9) - 0.01:
-                print(f"Resolution: {screen.get_size()[0]}x{screen.get_size()[1]}")
-                pygame.display.set_mode((screen.get_size()[0], screen.get_size()[0]*0.5625), pygame.RESIZABLE)
+async def main():
+    global screen
+    global developerMode
+    npcPrototype = False
+    shapeTest = False
+    fullscreen = False
+    mainMenu = True
+    startup = True
+    closeWindow = False
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            screen.fill(gameColors["grey"])
+            
+            if event.type == pygame.KEYDOWN:
+                key = pygame.key.name(event.key)
+                if mac == False and key=="f11":
+                    fullscreen = not fullscreen  # Toggle state
+                    if fullscreen:
+                    # Enable fullscreen
+                        oldWidth = screen.get_width()
+                        oldHeight = screen.get_height()
+                        pygame.display.quit()
+                        pygame.display.set_caption("Wherever Whenever!")
+                        pygame.display.init()
+                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+                    else:
+                        # Return to windowed mode
+                        pygame.display.quit()
+                        pygame.display.set_caption("Wherever Whenever!")
+                        pygame.display.init()
+                        screen = pygame.display.set_mode((oldWidth, oldHeight), pygame.RESIZABLE)
+            
+            
+            # This tries to size the window correctly so black borders can be avoided
+            if screen.get_size()[0] != usersDisplaySize.current_w:
+                if screen.get_size()[0] / screen.get_size()[1] > (16/9) + 0.01 or screen.get_size()[0] / screen.get_size()[1] < (16/9) - 0.01:
+                    pygame.display.set_mode((screen.get_size()[0], screen.get_size()[0]*0.5625), pygame.RESIZABLE)
 
 
-        # THIS DRAWS BLACK BORDERS if user aaspect ratio is different
-            #pygame.draw.rect(screen, gameColors["white"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleX))
-        if screen.get_size()[0]/screen.get_size()[1] > (16/9):
-           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (unscaleX(0)-0), (screen.get_size()[1])))
-           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(unscaleX(1920),0, (unscaleX(0)-0), (screen.get_size()[1])))
-        elif screen.get_size()[0]/screen.get_size()[1] < (16/9):
-           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (screen.get_size()[0]), (unscaleY(0)-0)))
-           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,unscaleY(1080), (screen.get_size()[0]), (unscaleY(0)-0)))
+            # THIS DRAWS BLACK BORDERS if user aaspect ratio is different
+                #pygame.draw.rect(screen, gameColors["white"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleX))
+            if screen.get_size()[0]/screen.get_size()[1] > (16/9):
+                pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (unscaleX(0)-0), (screen.get_size()[1])))
+                pygame.draw.rect(screen, gameColors["black"], pygame.Rect(unscaleX(1920),0, (unscaleX(0)-0), (screen.get_size()[1])))
+            elif screen.get_size()[0]/screen.get_size()[1] < (16/9):
+                pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (screen.get_size()[0]), (unscaleY(0)-0)))
+                pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,unscaleY(1080), (screen.get_size()[0]), (unscaleY(0)-0)))
 
-        if mainMenu == True:
-            mainMenuImg = pygame.image.load('mainmenu.jpg')
-            mainMenuImg = pygame.transform.scale(mainMenuImg, (unscaleWidth(1920), unscaleHeight(1080)))
-            mainMenuRect = mainMenuImg.get_rect()
-            mainMenuRect.topleft = (unscaleX(0), unscaleY(0))
-            screen.blit(mainMenuImg, mainMenuRect)
-           #Draw vertical bezels yet
-        if developerMode == True:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos() #dont ask me why but for this function it doesn't need event.mouse to be inside the brackets, you'll get an error if you try
-                    print(str(pos[0]) + ", " + str(pos[1]))
-                    print(f"Scaled: ({scaleX(pos[0])}, {scaleY(pos[1])})")
-                    print(f"Reversed: ({unscaleX(scaleX(pos[0]))}, {unscaleY(scaleY(pos[1]))})")
-                    print(f"Game Resolution: {screen.get_size()[0]}x{screen.get_size()[1]}")
-                if event.type == pygame.KEYDOWN:
-                    key = pygame.key.name(event.key)
-                    if developerMode == True:
-                        if key == "n":
-                            npcPrototype = True
-                        if key == "s":
-                            shapeTest = True
-                if shapeTest == True:
-                    pygame.draw.rect(screen, gameColors["red"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleWidth(60), unscaleHeight(60)))
-                    
-                if npcPrototype == True:
-                    img = pygame.image.load('npcchatbox.png')
-                    img = pygame.transform.scale(img, (unscaleWidth(1920), unscaleHeight(1080)))
-                    imgRect = img.get_rect()
-                    imgRect.topleft = (unscaleX(0), unscaleY(0))
-                    screen.blit(img, imgRect)
-                    font = pygame.font.SysFont("Arial", int(unscaleHeight(81)))
-                    npcName = font.render('Natalia M', True, gameColors["white"])
-                    screen.blit(npcName, (unscaleX(546), unscaleY(690)))
+            if mainMenu == True:
+                mainMenuImg = pygame.image.load('mainmenu.jpg')
+                mainMenuImg = pygame.transform.scale(mainMenuImg, (unscaleWidth(1920), unscaleHeight(1080)))
+                mainMenuRect = mainMenuImg.get_rect()
+                mainMenuRect.topleft = (unscaleX(0), unscaleY(0))
+                screen.blit(mainMenuImg, mainMenuRect)
+            #Draw vertical bezels yet
+            if developerMode == True:
+                    if event.type == pygame.KEYDOWN:
+                        key = pygame.key.name(event.key)
+                        if developerMode == True:
+                            if key == "n":
+                                npcPrototype = True
+                            if key == "s":
+                                shapeTest = True
+                    if shapeTest == True:
+                        pygame.draw.rect(screen, gameColors["red"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleWidth(60), unscaleHeight(60)))
+                        
+                    if npcPrototype == True:
+                        img = pygame.image.load('npcchatbox.png')
+                        img = pygame.transform.scale(img, (unscaleWidth(1920), unscaleHeight(1080)))
+                        imgRect = img.get_rect()
+                        imgRect.topleft = (unscaleX(0), unscaleY(0))
+                        screen.blit(img, imgRect)
+                        font = pygame.font.SysFont("Arial", int(unscaleHeight(81)))
+                        npcName = font.render('Natalia M', True, gameColors["white"])
+                        screen.blit(npcName, (unscaleX(546), unscaleY(690)))
 
-        pygame.display.flip()
+            pygame.display.flip()
+            await asyncio.sleep(0)
 
 
-pygame.quit()
-sys.exit()
+asyncio.run(main())
