@@ -30,57 +30,8 @@ usersDisplaySize = pygame.display.Info()
 
 
 
-def scaleX(input_x):
-    base_width = 1920
-    global screen
-    usersDisplaySize = screen.get_size()[0]
-    scale = usersDisplaySize/base_width
-    return int(input_x // scale)
 
 
-def unscaleX(input_x):
-    base_width = 1920
-    global screen
-    usersDisplaySize = screen.get_size()[0]
-    return input_x * (usersDisplaySize/base_width)
-
-def unscaleWidth(input_x):
-    point0 = unscaleX(0)
-    pointX = unscaleX(input_x)
-    return pointX - point0
-
-def scaleY(input_y):
-    global screen
-    width = screen.get_size()[0]
-    height = screen.get_size()[1]
-
-    realBezelsHeight = height - (width/(16/9))
-
-    gradient = (1080)/((height - (realBezelsHeight/2))-realBezelsHeight/2)
-    yIntercept = 0 - (gradient * (realBezelsHeight/2))
-    return int((gradient*input_y)+yIntercept)
-
-
-
-
-def unscaleY(transformed_y):
-    global screen
-    width = screen.get_size()[0]
-    height = screen.get_size()[1]
-
-    realBezelsHeight = height - (width / (16 / 9))
-    gradient = 1080 / ((height - (realBezelsHeight / 2)) - realBezelsHeight / 2)
-    yIntercept = 0 - (gradient * (realBezelsHeight / 2))
-
-    # Reverse the transformation to get the original input_y
-    input_y = (transformed_y - yIntercept) / gradient
-    return input_y
-    
-
-def unscaleHeight(input_x):
-    point0 = unscaleY(0)
-    pointX = unscaleY(input_x)
-    return pointX - point0
 
 pygame.display.set_caption("Wherever Whenever!")
 
@@ -98,7 +49,115 @@ if differentAspectRatio == False:
 elif differentAspectRatio == True:
     screen = pygame.display.set_mode((usersDisplaySize.current_w//2, ((usersDisplaySize.current_w//2)*0.5625)), pygame.RESIZABLE)
 
+def scaleX(x):
+    global screen
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
+    # if window is wider than 16/9
+    if (width/height) > (16/9):
+        # too wide means we need vertical bezels
+        # lets keep the height the same
+        idealWidth = height * (16 / 9)
+        totalBezelsWidth = width - idealWidth
+        bezelWidth = totalBezelsWidth / 2
 
+        #now we are going to imagine a graph. with x on the x axis, and the imaginary coordinates on the y axis. lets find the equation of this line
+        # point 1 bezelWidth, imaginary Coordinate 0
+        # point 2 (width-bezelWidth), imaginary coordinate 1920
+
+        gradient = (1920)/((width-bezelWidth)-(bezelWidth))
+        yIntercept = 0 - (gradient*bezelWidth)
+
+        return int((gradient*x)+yIntercept)
+
+    # if window is less wide than 16/9
+    elif (width/height) <= (16/9):
+        scale = 1920 / width
+        return int(scale * x)
+    
+def unscaleX(x):
+    global screen
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
+    # if window is wider than 16/9
+    if (width/height) > (16/9):
+        # too wide means we need vertical bezels
+        # lets keep the height the same
+        idealWidth = height * (16 / 9)
+        totalBezelsWidth = width - idealWidth
+        bezelWidth = totalBezelsWidth / 2
+
+        #now we are going to imagine a graph. with x on the x axis, and the imaginary coordinates on the y axis. lets find the equation of this line
+        # point 1 bezelWidth, imaginary Coordinate 0
+        # point 2 (width-bezelWidth), imaginary coordinate 1920
+
+        gradient =((width-bezelWidth)-(bezelWidth))/(1920)
+        yIntercept = bezelWidth - (gradient*0)
+
+        return int((gradient*x)+yIntercept)
+
+    # if window is less wide than 16/9
+    elif (width/height) <= (16/9):
+        scale = 1920 / width
+        return int(x / scale)
+    
+def scaleY(y):
+    global screen
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
+    # if window is wider than 16/9 we want vertical bezels. vertical bezels affect x cord not y
+    if (width/height) > (16/9):
+        scale = 1080/height
+        return int(y * scale)
+    elif (width/height) <= (16/9):
+        idealHeight = width * (9/16)
+        totalBezelsHeight = height - idealHeight
+        bezelHeight = totalBezelsHeight / 2
+
+        # now we need to imagine a graph. x axis being a real y coordinates and y axis being the imaginary equivelent
+        # we know that at these points:
+        # point 1, bezelHeight, imaginary=0
+        #point 2, (height-bezelHeight), imaginary=1080
+
+        gradient = (1080)/((height-bezelHeight)-(bezelHeight))
+        yIntercept = 0 - (gradient*bezelHeight)
+        return int((gradient*y) + yIntercept)
+    # if window is less wide than 16/9 we want horizontal bezels. horizontal bezels will affect the y cord but not x
+
+def unscaleY(y):
+    global screen
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
+    
+    if (width / height) > (16 / 9):
+        # Inverse scaling for wider than 16:9
+        scale = 1080 / height
+        return int(y / scale)
+    
+    elif (width / height) <= (16 / 9):
+        # Inverse linear transformation for 16:9 or narrower aspect ratio
+        idealHeight = width * (9 / 16)
+        totalBezelsHeight = height - idealHeight
+        bezelHeight = totalBezelsHeight / 2
+
+        gradient = 1080 / (height - 2 * bezelHeight)
+        yIntercept = -gradient * bezelHeight
+
+        # Reversing the formula: y = (output - yIntercept) / gradient
+        return int((y - yIntercept) / gradient)
+    
+def unscaleWidth(width):
+    point0 = unscaleX(0)
+    pointX = unscaleX(width)
+    return int(pointX-point0)
+
+def unscaleHeight(height):
+    point0 = unscaleY(0)
+    pointY = unscaleY(height)
+    return int(pointY-point0)
+
+
+mainMenu = True
 startup = True
 closeWindow = False
 while closeWindow == False:
@@ -107,38 +166,34 @@ while closeWindow == False:
             closeWindow = True
         
         screen.fill(gameColors["grey"])
-
-        if event.type == pygame.VIDEORESIZE or startup == True:
-            if (screen.get_size()[0], screen.get_size()[1]) != (usersDisplaySize.current_w, usersDisplaySize.current_h): #if the game isnt fullscreen
-                if screen.get_size()[0]/screen.get_size()[1] < (16/9-0.01) or screen.get_size()[0]/screen.get_size()[1] > (16/9+0.01):
-                    screen = pygame.display.set_mode((screen.get_size()[0], (screen.get_size()[0]*0.5625)), pygame.RESIZABLE)
-                    print(screen.get_size()[0], (screen.get_size()[0]*0.5625))
-                    print(screen.get_size()[0], (screen.get_size()[1]))
-                
-            startup = False
-
-
-        if differentAspectRatio == True:
-            #we need to find the bottm right coord of the top bezel
-
-            topBezelHeight = unscaleY(0) # unlike unscaleX(0), it is not in te exact corner of a window
-            topBezelWidth = unscaleWidth(1920)
-
-            pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0, 0, topBezelWidth, topBezelHeight))
-            
-            topLeftCornerY = unscaleY(1080)
-            # as its on the very left it has to be 0
-            pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0, topLeftCornerY, topBezelWidth, topBezelHeight))
-
-
+        
+        if screen.get_size()[0] != usersDisplaySize.current_w:
+            if screen.get_size()[0] / screen.get_size()[1] > (16/9) + 0.01 or screen.get_size()[0] / screen.get_size()[1] < (16/9) - 0.01:
+                print(f"Resolution: {screen.get_size()[0]}x{screen.get_size()[1]}")
+                pygame.display.set_mode((screen.get_size()[0], screen.get_size()[0]*0.5625), pygame.RESIZABLE)
 
             #pygame.draw.rect(screen, gameColors["white"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleX))
+        if screen.get_size()[0]/screen.get_size()[1] > (16/9):
+           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (unscaleX(0)-0), (screen.get_size()[1])))
+           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(unscaleX(1920),0, (unscaleX(0)-0), (screen.get_size()[1])))
+        elif screen.get_size()[0]/screen.get_size()[1] < (16/9):
+           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,0, (screen.get_size()[0]), (unscaleY(0)-0)))
+           pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,unscaleY(1080), (screen.get_size()[0]), (unscaleY(0)-0)))
 
+        if mainMenu == True:
+            mainMenuImg = pygame.image.load('mainmenu.jpg')
+            mainMenuImg = pygame.transform.scale(mainMenuImg, (unscaleWidth(1920), unscaleHeight(1080)))
+            mainMenuRect = mainMenuImg.get_rect()
+            mainMenuRect.topleft = (unscaleX(0), unscaleY(0))
+            screen.blit(mainMenuImg, mainMenuRect)
+           #Draw vertical bezels yet
         if developerMode == True:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos() #dont ask me why but for this function it doesn't need event.mouse to be inside the brackets, you'll get an error if you try
                     print(str(pos[0]) + ", " + str(pos[1]))
-                    print(f"Scaled: {scaleX(pos[0])}, {scaleY(pos[1])}")
+                    print(f"Scaled: ({scaleX(pos[0])}, {scaleY(pos[1])})")
+                    print(f"Reversed: ({unscaleX(scaleX(pos[0]))}, {unscaleY(scaleY(pos[1]))})")
+                    print(f"Game Resolution: {screen.get_size()[0]}x{screen.get_size()[1]}")
                 if event.type == pygame.KEYDOWN:
                     key = pygame.key.name(event.key)
                     if developerMode == True:
@@ -148,6 +203,7 @@ while closeWindow == False:
                             shapeTest = True
                 if shapeTest == True:
                     pygame.draw.rect(screen, gameColors["red"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleWidth(60), unscaleHeight(60)))
+                    
                 if npcPrototype == True:
                     img = pygame.image.load('npcchatbox.png')
                     img = pygame.transform.scale(img, (unscaleWidth(1920), unscaleHeight(1080)))
