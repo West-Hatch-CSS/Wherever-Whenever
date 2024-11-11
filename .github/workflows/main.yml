@@ -18,6 +18,13 @@ jobs:
         with:
           python-version: '3.8'
 
+      # Debug step to check SSL certificate paths
+      - name: Check SSL certificates
+        run: |
+          python -m ssl --help  # Check SSL module for errors
+          ls -al /etc/ssl/certs # List SSL certificate files
+          echo | openssl s_client -showcerts -servername github.com -connect github.com:443 # Check SSL connection to GitHub
+
       - name: Install pygbag
         run: |
           pip install pygbag
