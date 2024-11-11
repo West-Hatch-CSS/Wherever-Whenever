@@ -1,36 +1,28 @@
-name: Run pygbag on update
-
+name: Build Wherever Whenever with Pygbag
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  run-pygbag:
+  build-pygbag:
+    name: Sandy Inspires - Space Invaders Game
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Checkout
+      run: |
+            echo "Attempting to install pygbag"
+            python -m pip install pygbag
+            echo "Successfully installed pygbag"
+            echo "Attempting to build the game"
+            python -m pygbag --build $GITHUB_WORKSPACE/space_invaders/main.py
+            echo "Successfully build the game and complied to WebAssembly"
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      # Debug step to check SSL certificate paths
-      - name: Check SSL certificates
-        run: |
-          python -m ssl --help  # Check SSL module for errors
-          ls -al /etc/ssl/certs # List SSL certificate files
-          echo | openssl s_client -showcerts -servername github.com -connect github.com:443 # Check SSL connection to GitHub
-
-      - name: Install pygbag (no SSL verification)
-        run: |
-          pip install pygbag --trusted-host pypi.org --trusted-host files.pythonhosted.org
-
-
-      - name: Run pygbag from parent directory
-        run: |
-          cd ..
-          pygbag ${{ github.event.repository.name }}
+    - name : "Upload to GitHub pages branch gh-pages"
+      uses: JamesIves/github-pages-deploy-action@4.1.7
+      with:
+        branch: gh-pages
+        folder: coreGame/build/web
