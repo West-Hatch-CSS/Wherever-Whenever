@@ -204,7 +204,7 @@ async def main():
                 pygame.draw.rect(screen, gameColors["black"], pygame.Rect(0,unscaleY(1080), (screen.get_size()[0]), (unscaleY(0)-0)))
 
             if mainMenu == True:
-                mainMenuImg = pygame.image.load('mainmenu.jpg')
+                mainMenuImg = pygame.image.load('mainmenu.png')
                 mainMenuImg = pygame.transform.scale(mainMenuImg, (unscaleWidth(1920), unscaleHeight(1080)))
                 mainMenuRect = mainMenuImg.get_rect()
                 mainMenuRect.topleft = (unscaleX(0), unscaleY(0))
