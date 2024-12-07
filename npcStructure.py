@@ -1,3 +1,5 @@
+import pickle
+
 class response:
     def __init__(self, responseText: str, nextConversation: str):
         if not isinstance(responseText, str):
@@ -44,6 +46,7 @@ class NPC:
     def __init__(self, name: str, conversations: list = []):
         self.name = name
         self.conversations = conversations
+        self.screen = None
 
     @classmethod
     def automateMakingNPC(cls):
@@ -60,7 +63,22 @@ class NPC:
 
         newNPC = NPC(npcName, conversations)
         return newNPC
+    
+    
+        
+    def getConversation(self, conversationName):
+        for x in self.conversations:
+            if x.name == conversationName:
+                return x
+                
+    
+    
 
-max = NPC("Max", [])
+    @classmethod
+    def fetchNpcData(cls):
+        with open("NPCs.pkl", "rb") as npcFile:
+            npcDatabase = pickle.load(npcFile)
+                                
+        return npcDatabase
 
-max.conversations
+

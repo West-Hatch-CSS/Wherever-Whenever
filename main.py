@@ -1,4 +1,5 @@
-import pygame, sys, asyncio
+import pygame, sys
+from npcStructure import *
 
 pygame.init()
 
@@ -152,10 +153,31 @@ def unscaleHeight(height):
     pointY = unscaleY(height)
     return int(pointY-point0)
 
-async def main():
+def displayConvo(screen, convo):
+        img = pygame.image.load('chatbox.png')
+        img = pygame.transform.scale(img, (unscaleWidth(1920), unscaleHeight(1080)))
+        imgRect = img.get_rect()
+        imgRect.topleft = (unscaleX(0), unscaleY(0))
+        screen.blit(img, imgRect)
+        print(convo.text)
+        for response in convo.responses:
+            print(response.responseText)
+        if convo.name == 'start':
+            return 'start2'
+        elif convo.name == "start2":
+            return ''
+        
+def talkToNPC(screen, npc):
+    nextConvo = 'start'
+    while nextConvo != '':
+        convo = npc.getConversation(nextConvo)
+        nextConvo = displayConvo(screen, convo)
+
+def main():
     global screen
     global developerMode
     npcPrototype = False
+    newNpcPrototype = False
     shapeTest = False
     fullscreen = False
     mainMenu = True
@@ -211,6 +233,8 @@ async def main():
                 screen.blit(mainMenuImg, mainMenuRect)
             #Draw vertical bezels yet
             if developerMode == True:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        print(f"{scaleX(pygame.mouse.get_pos()[0])}x{scaleY(pygame.mouse.get_pos()[1])}")
                     if event.type == pygame.KEYDOWN:
                         key = pygame.key.name(event.key)
                         if developerMode == True:
@@ -218,6 +242,9 @@ async def main():
                                 npcPrototype = True
                             if key == "s":
                                 shapeTest = True
+                            if key == "d": #dialouge test
+                                newNpcPrototype = True
+                                
                     if shapeTest == True:
                         pygame.draw.rect(screen, gameColors["red"], pygame.Rect(unscaleX(0), unscaleY(0), unscaleWidth(60), unscaleHeight(60)))
                         
@@ -231,8 +258,14 @@ async def main():
                         npcName = font.render('Natalia M', True, gameColors["white"])
                         screen.blit(npcName, (unscaleX(546), unscaleY(690)))
 
+                    if newNpcPrototype == True:
+                        NPCData = NPC.fetchNpcData()
+                        for npcIndividual in NPCData:
+                            if npcIndividual.name == "Natalia M":
+                                natalia = npcIndividual
+                        talkToNPC(screen, natalia)
+
             pygame.display.flip()
-            await asyncio.sleep(0)
 
 
-asyncio.run(main())
+main()
