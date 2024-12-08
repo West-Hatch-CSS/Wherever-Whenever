@@ -1,4 +1,6 @@
-import pygame, sys
+import pygame
+import sys
+import asyncio
 from npcStructure import *
 
 pygame.init()
@@ -22,6 +24,12 @@ for k, v in gameColors.items():
 mac = False
 if sys.platform == "darwin":
     mac = True
+
+
+if sys.platform == "emscripten":
+    platform.window.canvas.style.imageRendering = "pixelated"
+
+
 
 # The above code checks if the platform is Mac, as there are a few limitations that pygame has only for mac users.
 
@@ -173,7 +181,7 @@ def talkToNPC(screen, npc):
         convo = npc.getConversation(nextConvo)
         nextConvo = displayConvo(screen, convo)
 
-def main():
+async def main():
     global screen
     global developerMode
     npcPrototype = False
@@ -264,8 +272,9 @@ def main():
                             if npcIndividual.name == "Natalia M":
                                 natalia = npcIndividual
                         talkToNPC(screen, natalia)
+        await asyncio.sleep(0)
+        pygame.display.flip()
 
-            pygame.display.flip()
 
-
-main()
+if __name__ == "__main__":
+    asyncio.run(main())
