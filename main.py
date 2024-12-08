@@ -1,3 +1,4 @@
+#IMPORTANT: some functions in this file are functions defined in npcStructure.py, so i suggest going there when first looking at this code
 import pygame, sys, asyncio
 
 pygame.init()
