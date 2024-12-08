@@ -1,7 +1,9 @@
-
 name: pygbag_build
-on: [workflow_dispatch]
-
+on:
+  push:
+    branches:
+      - webVersion
+  workflow_dispatch:
 
 jobs:
   build-pygbag:
