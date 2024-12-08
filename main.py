@@ -155,9 +155,9 @@ def unscaleHeight(height):
 
 def displayConvo(screen, convo):
         img = pygame.image.load('chatbox.png')
-        img = pygame.transform.scale(img, (unscaleWidth(1920), unscaleHeight(1080)))
+        img = pygame.transform.scale(img, (unscaleWidth(1920), unscaleHeight(1000)))
         imgRect = img.get_rect()
-        imgRect.topleft = (unscaleX(0), unscaleY(0))
+        imgRect.topleft = (unscaleX(0), unscaleY(550))
         screen.blit(img, imgRect)
         print(convo.text)
         for response in convo.responses:
