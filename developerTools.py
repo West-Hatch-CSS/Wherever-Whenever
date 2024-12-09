@@ -1,3 +1,5 @@
+#IMPORTANT: some functions in this file are functions defined in npcStructure.py, so i suggest going there when first looking at this code
+#the tools used from npcStructure.py are: .NPC , .automateMakingNPC , .name , .conversations , .text , .responses , .responseText , .nextConversation
 import npcStructure, pickle
 
 toolsMenu = """Here are the following tools we can use to automate some things:
