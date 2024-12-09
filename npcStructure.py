@@ -1,6 +1,8 @@
 import pickle
 
 class response:
+    #the function below helps add responses to dialogue for characters using .nextConversation and .responseText
+    #self is the object itself and you assign it a data type
     def __init__(self, responseText: str, nextConversation: str):
         if not isinstance(responseText, str):
            raise TypeError("responseText must be a string")
@@ -9,8 +11,8 @@ class response:
         self.responseText = responseText
         self.nextConversation = nextConversation
 
-
 class conversation:
+    #adds additional dialogue followed by a response 
     def __init__(self, name: str, text: str, responses: list = []):
         if not isinstance(name, str):
             raise TypeError("conversationName must be a string")
@@ -22,6 +24,7 @@ class conversation:
         self.text = text
         self.responses = responses
     
+    #generates the conversation using already created dialogue: name of convo + responses available
     @classmethod
     def automateMakingConversation(cls):
         conversationName = input("Enter the name of the conversation:\n")
@@ -43,11 +46,13 @@ class conversation:
         return new_conversation
     
 class NPC:
+    #defines the NPC by name and conversations available 
     def __init__(self, name: str, conversations: list = []):
         self.name = name
         self.conversations = conversations
         self.screen = None
 
+    #connects the dialogue to a specific npc
     @classmethod
     def automateMakingNPC(cls):
         npcName = input("Enter the name of the NPC:\n")
@@ -65,20 +70,20 @@ class NPC:
         return newNPC
     
     
-        
+
+#fetches specific dialogue by name 
+
     def getConversation(self, conversationName):
         for x in self.conversations:
             if x.name == conversationName:
                 return x
                 
     
-    
-
+    #fetches npc + dialogue and displayes it for user 
     @classmethod
     def fetchNpcData(cls):
         with open("NPCs.pkl", "rb") as npcFile:
             npcDatabase = pickle.load(npcFile)
                                 
         return npcDatabase
-
 

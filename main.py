@@ -1,3 +1,6 @@
+
+#IMPORTANT: some functions in this file are functions defined in npcStructure.py, so i suggest going there when first looking at this code
+
 import pygame, sys
 from npcStructure import *
 
@@ -58,7 +61,7 @@ def scaleX(x):
         totalBezelsWidth = width - idealWidth
         bezelWidth = totalBezelsWidth / 2
 
-        #now we are going to imagine a graph. with x on the x axis, and the imaginary coordinates on the y axis. lets find the equation of this line
+        # now we are going to imagine a graph. with x on the x axis, and the imaginary coordinates on the y axis. lets find the equation of this line
         # point 1 bezelWidth, imaginary Coordinate 0
         # point 2 (width-bezelWidth), imaginary coordinate 1920
 
