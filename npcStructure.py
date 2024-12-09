@@ -1,4 +1,6 @@
 class response:
+    #the function below helps add responses to dialogue for characters using .nextConversation and .responseText
+    #self is the object itself and you assign it a data type
     def __init__(self, responseText: str, nextConversation: str):
         if not isinstance(responseText, str):
            raise TypeError("responseText must be a string")
@@ -9,6 +11,7 @@ class response:
 
 
 class conversation:
+    #adds additional dialogue followed by a response 
     def __init__(self, name: str, text: str, responses: list = []):
         if not isinstance(name, str):
             raise TypeError("conversationName must be a string")
@@ -21,6 +24,7 @@ class conversation:
         self.responses = responses
     
     @classmethod
+    #generates the conversation using already created dialogue: name of convo + responses available
     def automateMakingConversation(cls):
         conversationName = input("Enter the name of the conversation:\n")
         text = input("Enter what the NPC first says:\n")
@@ -41,12 +45,14 @@ class conversation:
         return new_conversation
     
 class NPC:
+    #defines the NPC by name and conversations available 
     def __init__(self, name: str, conversations: list = []):
         self.name = name
         self.conversations = conversations
 
     @classmethod
     def automateMakingNPC(cls):
+        #connects the dialogue to a specific npc
         npcName = input("Enter the name of the NPC:\n")
         moreConversationsPlease = True
         conversations = []
