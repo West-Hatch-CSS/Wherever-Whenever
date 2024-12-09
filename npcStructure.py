@@ -1,4 +1,5 @@
 import pickle
+
 class response:
     #the function below helps add responses to dialogue for characters using .nextConversation and .responseText
     #self is the object itself and you assign it a data type
@@ -23,8 +24,8 @@ class conversation:
         self.text = text
         self.responses = responses
     
-    @classmethod
     #generates the conversation using already created dialogue: name of convo + responses available
+    @classmethod
     def automateMakingConversation(cls):
         conversationName = input("Enter the name of the conversation:\n")
         text = input("Enter what the NPC first says:\n")
@@ -51,8 +52,8 @@ class NPC:
         self.conversations = conversations
         self.screen = None
 
-    @classmethod
     #connects the dialogue to a specific npc
+    @classmethod
     def automateMakingNPC(cls):
         npcName = input("Enter the name of the NPC:\n")
         moreConversationsPlease = True
@@ -69,19 +70,20 @@ class NPC:
         return newNPC
     
     
-    #fetches specific dialogue by name 
+
+#fetches specific dialogue by name 
+
     def getConversation(self, conversationName):
         for x in self.conversations:
             if x.name == conversationName:
                 return x
                 
     
-    
-
-    @classmethod
     #fetches npc + dialogue and displayes it for user 
+    @classmethod
     def fetchNpcData(cls):
         with open("NPCs.pkl", "rb") as npcFile:
             npcDatabase = pickle.load(npcFile)
                                 
         return npcDatabase
+
