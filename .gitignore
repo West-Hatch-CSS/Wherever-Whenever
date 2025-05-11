@@ -4,3 +4,4 @@ __pycache__/
 *.pyo
 .DS_Store  # Mac specific
 .vscode/  # VSCode settings
+.DS_Store
