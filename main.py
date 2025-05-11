@@ -2,7 +2,6 @@
 #IMPORTANT: some functions in this file are functions defined in npcStructure.py, so i suggest going there when first looking at this code
 
 import pygame, sys
-from npcStructure import *
 
 pygame.init()
 
@@ -261,12 +260,6 @@ def main():
                         npcName = font.render('Natalia M', True, gameColors["white"])
                         screen.blit(npcName, (unscaleX(546), unscaleY(690)))
 
-                    if newNpcPrototype == True:
-                        NPCData = NPC.fetchNpcData()
-                        for npcIndividual in NPCData:
-                            if npcIndividual.name == "Natalia M":
-                                natalia = npcIndividual
-                        talkToNPC(screen, natalia)
 
             pygame.display.flip()
 
